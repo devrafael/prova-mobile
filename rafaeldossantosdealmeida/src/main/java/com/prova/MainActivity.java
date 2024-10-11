@@ -30,10 +30,10 @@ public class MainActivity extends AppCompatActivity {
     private final String COR_FUNDO_LETRA = "#FFFFFF";
     private final boolean[] arrayQuads = new boolean[NUM_COLUNAS * NUM_LINHAS];
     Set<Character> letrasClicadas = new HashSet<>();
-
+    private final HashMap<Integer, Button> btnMap = new HashMap<>();
     private LayoutInflater inflater;
     private TableLayout tableLayout;
-    private final HashMap<Integer, Button> btnMap = new HashMap<>();
+    
     Character[] caracteresArray;
     private TextView tvMensagem;
 
@@ -90,9 +90,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Clicar(view);
-                        revealLetter(btn, nomeOculto, "RAFAEL", R.id.tv_nome);
-                        revealLetter(btn, sobrenomeOculto, "DOS SANTOS DE ALMEIDA", R.id.tv_sobrenome);
-                        revealLetter(btn, matriculaOculta, "200028321", R.id.tv_matricula);
+                        revelarLetra(btn, nomeOculto, "RAFAEL", R.id.tv_nome);
+                        revelarLetra(btn, sobrenomeOculto, "DOS SANTOS DE ALMEIDA", R.id.tv_sobrenome);
+                        revelarLetra(btn, matriculaOculta, "200028321", R.id.tv_matricula);
                         String letra = btn.getText().toString();
                         if (letra != null) {
                             letrasClicadas.add(letra.charAt(0));
@@ -100,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
                         verificarConclusao();
                     }
                 });
-
                 tableRow.addView(btn);
                 btnMap.put(btnId, btn);
                 btnId++;
@@ -124,23 +123,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void handleReset(View view) {
-        this.resetarEstado();
+        this.Reset();
     }
 
     private void embaralharTeclas() {
         List<Character> listaCaracteres = Arrays.asList(caracteresArray);
-        System.out.println(listaCaracteres);
         List<Character> listaCompleta = new ArrayList<>(listaCaracteres);
-        System.out.println(listaCompleta);
-
-        // Adiciona espaços até preencher o tamanho necessário
         while (listaCompleta.size() < NUM_LINHAS * NUM_COLUNAS) {
             listaCompleta.add(' ');
         }
 
         Collections.shuffle(listaCompleta);
         boolean primeiroEspacoEncontrado = false;
-        System.out.println("letra clicada: " + letrasClicadas);
         for (int i = 0; i < btnMap.size(); i++) {
             Button btn = btnMap.get(i);
             if (btn != null && i < listaCompleta.size()) {
@@ -169,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void resetarEstado() {
+    private void Reset() {
         tvMensagem.setVisibility(View.GONE);
         tvMensagem.setText("");
 
@@ -192,8 +186,6 @@ public class MainActivity extends AppCompatActivity {
             if (btn != null) {
                 btn.setEnabled(true);
                 btn.setBackgroundColor(Color.parseColor(COR_UNSELECT));
-
-
                 if (i < teclado.length) {
                     btn.setText(teclado[i]);
                     btn.setBackgroundColor(Color.parseColor(COR_FUNDO_LETRA));
@@ -203,14 +195,13 @@ public class MainActivity extends AppCompatActivity {
                 }
                 arrayQuads[i] = false;
             }
-
         }
         letrasClicadas.clear();
     }
 
 
 
-    private void revealLetter(Button btn, StringBuilder oculto, String palavra, int textViewId) {
+    private void revelarLetra(Button btn, StringBuilder oculto, String palavra, int textViewId) {
         String letra = btn.getText().toString();
 
         if (letra.equals("")) {
@@ -219,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
 
         for (int i = 0; i < palavra.length(); i++) {
             if (palavra.charAt(i) == letra.charAt(0)) {
-
                 if (oculto.charAt(i) == '*') {
                     oculto.setCharAt(i, letra.charAt(0));
                     letrasReveladas++;
@@ -231,10 +221,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void verificarConclusao() {
-        System.out.println("letrasReveladas: " + letrasReveladas);
-        System.out.println("soma length: " + (nomeOculto.length() + sobrenomeOculto.length() + matriculaOculta.length()));
         if (letrasReveladas == (nomeOculto.length() + sobrenomeOculto.length() + matriculaOculta.length())) {
-
             tvMensagem.setText("PARABÉNS! VOCÊ COMPLETOU!");
             tvMensagem.setVisibility(View.VISIBLE);
         }
